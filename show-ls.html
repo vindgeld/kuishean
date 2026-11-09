@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>localStorage</title>
+    <style>
+        :root {
+            --bg-deep-teal: #246B70;
+            --card-teal: #34747A;
+            --text-white: #ffffff;
+            --notification-red: #ff4d4d;
+            --accent-blue: #00d2ff;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-deep-teal);
+            color: var(--text-white);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+       
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.8);
+            padding: 8px 5px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+        }
+
+        .admin-tools { margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; width: 100%; }
+        </style>
+</head>
+<body>
+
+
+    <div class="admin-tools">
+        <h3>localStorage</h3>
+        <button onclick="displayLocalStorage()">Show LocalStorage</button>
+        <button onclick="clearAllLocalStorage()" style="background: #ff4d4d; border: none; padding: 5px; color: white;">Clear All</button>
+        <ul id="storage-display" style="font-size: 0.8rem; color: #ccc;"></ul>
+    </div>
+</div>
+
+
+<script>
+    function renderList(type) {
+        const storageKey = type === 'category' ? 'app_categories' : 'app_wallets';
+        const listId = type === 'category' ? 'manage-cat-list' : 'manage-wal-list';
+        const container = document.getElementById(listId);
+        const items = JSON.parse(localStorage.getItem(storageKey) || "[]");
+
+        container.innerHTML = items.map((item, index) => `
+            <div class="list-item">
+                <span>${item}</span>
+                <span onclick="removeItem('${type}', ${index})" style="cursor:pointer; color:#f87171">✕</span>
+            </div>
+        `).join('');
+    }
+
+    function removeItem(type, index) {
+        const storageKey = type === 'category' ? 'app_categories' : 'app_wallets';
+        let items = JSON.parse(localStorage.getItem(storageKey));
+        items.splice(index, 1);
+        localStorage.setItem(storageKey, JSON.stringify(items));
+        renderList(type);
+    }
+
+    function displayLocalStorage() {
+        const container = document.getElementById('storage-display');
+        container.innerHTML = ''; 
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            const li = document.createElement('li');
+            li.textContent = `${key}: ${localStorage.getItem(key)}`;
+            container.appendChild(li);
+        }
+    }
+
+    function clearAllLocalStorage() {
+        localStorage.clear();
+        location.reload();
+    }
+    
+ 
+</script>
+
+</body>
+</html>
